@@ -1,5 +1,5 @@
 <div id="top">
-<h1 align="center">HealthBooker 🧑‍⚕️</h1>
+<h1 align="center">CareClique 2.0 🧑‍⚕️</h1>
 
 <h3>📝 Description :</h3> 
 Welcome to our comprehensive healthcare platform! Our website offers a seamless experience for users and doctors alike. Sign up or log in to unlock a range of features. Easily browse through a list of available doctors, manage your profile, and submit queries effortlessly. Stay updated with notifications and enjoy secure access to your information. Aspiring doctors can apply through our user-friendly system. Book appointments with your preferred doctors and track their completion status. Admin features ensure smooth operations, including approval of doctor applications and user management. Rest assured, all data is stored securely. Join us to experience a new era of convenient and efficient healthcare interactions.
@@ -114,7 +114,7 @@ npm start
 
 <p align="right"><a href="#top">Back to Top</a></p>
 
-### Home page
+<!-- ### Home page
 
 <img src="./client/src/images/full_pic.png" alt='home'/>
 
@@ -162,7 +162,7 @@ npm start
 
 <img src="./client/src/images/notifications.png" alt='notifications'/>
 
----
+--- -->
 
 <br/>
 
