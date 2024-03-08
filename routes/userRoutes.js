@@ -1,18 +1,19 @@
 const express = require("express");
 const auth = require("../middleware/auth");
+const rateLimiter = require("../middleware/ratelimiter");
 const userController = require("../controllers/userController");
 const userRouter = express.Router();
 
-userRouter.get("/getuser/:id", auth, userController.getuser);
+userRouter.get("/getuser/:id", rateLimiter, auth, userController.getuser);//
 
-userRouter.get("/getallusers", auth, userController.getallusers);
+userRouter.get("/getallusers", rateLimiter, auth, userController.getallusers);//
 
-userRouter.post("/login", userController.login);//
+userRouter.post("/login", rateLimiter, userController.login);//
 
-userRouter.post("/register", userController.register);//
+userRouter.post("/register", rateLimiter, userController.register);//
 
-userRouter.put("/updateprofile", auth, userController.updateprofile);
+userRouter.put("/updateprofile", rateLimiter, auth, userController.updateprofile); //
 
-userRouter.delete("/deleteuser", auth, userController.deleteuser);
+userRouter.delete("/deleteuser", rateLimiter, auth, userController.deleteuser);
 
 module.exports = userRouter;

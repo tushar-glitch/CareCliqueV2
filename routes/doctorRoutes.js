@@ -1,19 +1,20 @@
 const express = require("express");
 const doctorController = require("../controllers/doctorController");
+const rateLimiter = require("../middleware/ratelimiter");
 const auth = require("../middleware/auth");
 
 const doctorRouter = express.Router();
 
-doctorRouter.get("/getalldoctors", doctorController.getalldoctors);
+doctorRouter.get("/getalldoctors", rateLimiter, doctorController.getalldoctors);//
 
-doctorRouter.get("/getnotdoctors", auth, doctorController.getnotdoctors);
+doctorRouter.get("/getnotdoctors", rateLimiter, auth, doctorController.getnotdoctors);
 
-doctorRouter.post("/applyfordoctor", auth, doctorController.applyfordoctor);
+doctorRouter.post("/applyfordoctor", rateLimiter, auth, doctorController.applyfordoctor);
 
-doctorRouter.put("/deletedoctor", auth, doctorController.deletedoctor);
+doctorRouter.put("/deletedoctor", rateLimiter, auth, doctorController.deletedoctor);
 
-doctorRouter.put("/acceptdoctor", auth, doctorController.acceptdoctor);
+doctorRouter.put("/acceptdoctor", rateLimiter, auth, doctorController.acceptdoctor);
 
-doctorRouter.put("/rejectdoctor", auth, doctorController.rejectdoctor);
+doctorRouter.put("/rejectdoctor", rateLimiter, auth, doctorController.rejectdoctor);
 
 module.exports = doctorRouter;

@@ -11,7 +11,7 @@ import jwt_decode from "jwt-decode";
 // axios.defaults.baseURL = process.env.REACT_APP_SERVER_DOMAIN;
 
 function Profile() {
-  const { userId } = jwt_decode(localStorage.getItem("token"));
+  const { email } = jwt_decode(localStorage.getItem("token"));
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
   const [file, setFile] = useState("");
@@ -30,7 +30,7 @@ function Profile() {
   const getUser = async () => {
     try {
       dispatch(setLoading(true));
-      const temp = await fetchData(`${process.env.REACT_APP_SERVER_DOMAIN}/user/getuser/${userId}`);
+      const temp = await fetchData(`${process.env.REACT_APP_SERVER_DOMAIN}/user/getuser/${email}`);
       setFormDetails({
         ...temp,
         password: "",
@@ -89,7 +89,6 @@ function Profile() {
             lastname,
             age,
             mobile,
-            address,
             gender,
             email,
             password,

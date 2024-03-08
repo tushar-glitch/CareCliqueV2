@@ -7,8 +7,17 @@ const client = require('../db/conn');
 require("dotenv").config();
 const getuser = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
-    return res.send(user);
+    let userid = await client.query("select user_id from users where email = $1", [req.params.id]);
+    userid = userid.rows[0].user_id
+    console.log("userid "+userid);
+    client.query("select * from users where user_id = $1", [userid], (err, result) => {
+      console.log('fsda');
+      if (err) {
+        console.log(err);
+        return;
+      }
+      res.send(result.rows);
+    })
   } catch (error) {
     res.status(500).send("Unable to get user");
   }
@@ -80,15 +89,29 @@ const register = async (req, res) => {
 const updateprofile = async (req, res) => {
   console.log('asdf');
   try {
-    const hashedPass = await bcrypt.hash(req.body.password, 10);
-    const result = await User.findByIdAndUpdate(
-      { _id: req.locals },
-      { ...req.body, password: hashedPass }
-    );
-    if (!result) {
-      return res.status(500).send("Unable to update user");
-    }
-    return res.status(201).send("User updated successfully");
+    const token = req.headers.authorization.split(' ')[1];
+    const decode = jwt.decode(token);
+    let userid = await client.query("select user_id from users where email = $1", [decode.email]);
+    userid = userid.rows[0].user_id
+    let obj = req.body;
+    var query = "update users set "
+    Object.entries(obj).map((i) => {
+      let key = i[0], value = i[1];
+      if (key != 'user_id') {
+        query += `${key} = '${value}', `
+      }
+    })
+    query = query.slice(0, query.length-2)
+    query += ` where user_id = ${userid}`;
+    console.log(query);
+    client.query(query, (err, result) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      res.status(200).send("User updated successfully");
+    })
+    // update users set column_name  = desired_values where condition
   } catch (error) {
     res.status(500).send("Unable to update user");
   }

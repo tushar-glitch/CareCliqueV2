@@ -1,19 +1,16 @@
 const Appointment = require("../models/appointmentModel");
 const Notification = require("../models/notificationModel");
 const User = require("../models/userModel");
+const client = require("../db/conn");
+const jwt = require('jsonwebtoken')
 
 const getallappointments = async (req, res) => {
   try {
-    const keyword = req.query.search
-      ? {
-          $or: [{ userId: req.query.search }, { doctorId: req.query.search }],
-        }
-      : {};
+    const decode = jwt.decode(req.headers.authorization.split(' ')[1])
+    var userid = await client.query("select user_id from users where email = $1", [decode.email]);
+    userid = userid.rows[0].user_id
+    
 
-    const appointments = await Appointment.find(keyword)
-      .populate("doctorId")
-      .populate("userId");
-    return res.send(appointments);
   } catch (error) {
     res.status(500).send("Unable to get apponintments");
   }
@@ -21,31 +18,28 @@ const getallappointments = async (req, res) => {
 
 const bookappointment = async (req, res) => {
   try {
-    const appointment = await Appointment({
-      date: req.body.date,
-      time: req.body.time,
-      doctorId: req.body.doctorId,
-      userId: req.locals,
-    });
-
-    const usernotification = Notification({
-      userId: req.locals,
-      content: `You booked an appointment with Dr. ${req.body.doctorname} for ${req.body.date} ${req.body.time}`,
-    });
-
-    await usernotification.save();
-
-    const user = await User.findById(req.locals);
-
-    const doctornotification = Notification({
-      userId: req.body.doctorId,
-      content: `You have an appointment with ${user.firstname} ${user.lastname} on ${req.body.date} at ${req.body.time}`,
-    });
-
-    await doctornotification.save();
-
-    const result = await appointment.save();
-    return res.status(201).send(result);
+    const decode = jwt.decode(req.headers.authorization.split(' ')[1])
+    var userid = await client.query("select user_id from users where email = $1", [decode.email]);
+    userid = userid.rows[0].user_id
+    var docname = await client.query("select firstname from users inner join doctor on doctor.doc_id = users.user_id where users.user_id = $1", [req.body.doc_id]);
+    console.log(userid);
+    var userName = await client.query("select firstname from users where user_id = $1", [userid]);
+    docname = docname.rows[0].firstname
+    // var docname = "asdf"
+    userName = userName.rows[0].firstname
+    
+    console.log(userid + " " + docname + " " + userName);
+    client.query("insert into appointment (doc_id, user_id, date, time) values ($1, $2, $3, $4)", [req.body.doc_id, userid, req.body.date, req.body.time], (err, result) => { 
+      if (err) {
+        console.log(err);
+        return;
+      }
+      const contentforuser = `You booked an appointment with Dr.${ docname } for ${ req.body.date } at ${ req.body.time }`;
+      const contentfordoc = `You have an appointment with ${userName} on ${req.body.date} at ${req.body.time}`
+      client.query("insert into notification (user_id, read, content) values ($1, $2, $3)", [userid, false, contentforuser])
+      client.query("insert into notification (user_id, read, content) values ($1, $2, $3)", [req.body.doc_id, false, contentfordoc])
+    })
+    res.status(200).send("Appointment booked successfully!")
   } catch (error) {
     console.log("error", error);
     res.status(500).send("Unable to book appointment");

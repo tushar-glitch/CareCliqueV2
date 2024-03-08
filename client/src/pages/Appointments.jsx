@@ -15,13 +15,13 @@ const Appointments = () => {
   const [appointments, setAppointments] = useState([]);
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.root);
-  const { userId } = jwt_decode(localStorage.getItem("token"));
+  const { email } = jwt_decode(localStorage.getItem("token"));
 
   const getAllAppoint = async (e) => {
     try {
       dispatch(setLoading(true));
       const temp = await fetchData(
-        `/appointment/getallappointments?search=${userId}`
+        `/appointment/getallappointments?search=${email}`
       );
       setAppointments(temp);
       dispatch(setLoading(false));
@@ -40,7 +40,7 @@ const Appointments = () => {
           {
             appointid: ele?._id,
             doctorId: ele?.doctorId?._id,
-            doctorname: `${ele?.userId?.firstname} ${ele?.userId?.lastname}`,
+            doctorname: `${ele?.email?.firstname} ${ele?.email?.lastname}`,
           },
           {
             headers: {
@@ -83,7 +83,7 @@ const Appointments = () => {
                     <th>Booking Date</th>
                     <th>Booking Time</th>
                     <th>Status</th>
-                    {userId === appointments[0].doctorId?._id ? (
+                    {email === appointments[0].doctorId?._id ? (
                       <th>Action</th>
                     ) : (
                       <></>
@@ -108,7 +108,7 @@ const Appointments = () => {
                         <td>{ele?.createdAt.split("T")[0]}</td>
                         <td>{ele?.updatedAt.split("T")[1].split(".")[0]}</td>
                         <td>{ele?.status}</td>
-                        {userId === ele?.doctorId?._id ? (
+                        {email === ele?.doctorId?._id ? (
                           <td>
                             <button
                               className={`btn user-btn accept-btn ${

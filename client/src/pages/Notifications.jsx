@@ -20,6 +20,7 @@ const Notifications = () => {
       const temp = await fetchData(`/notification/getallnotifs`);
       dispatch(setLoading(false));
       setNotifications(temp);
+      console.log(temp);
     } catch (error) {}
   };
 
@@ -48,13 +49,14 @@ const Notifications = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {notifications?.map((ele, i) => {
+                    {notifications?.map((ele, i) => {
+                    console.log(ele);
                     return (
-                      <tr key={ele?._id}>
+                      <tr key={ele?.user_id}>
                         <td>{i + 1}</td>
                         <td>{ele?.content}</td>
-                        <td>{ele?.updatedAt.split("T")[0]}</td>
-                        <td>{ele?.updatedAt.split("T")[1].split(".")[0]}</td>
+                        <td>{ele?.content?.split(" ")[7]}</td>
+                        <td>{ele?.content?.split(" ")[9]}</td>
                       </tr>
                     );
                   })}

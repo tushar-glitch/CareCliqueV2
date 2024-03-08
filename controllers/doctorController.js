@@ -2,22 +2,20 @@ const Doctor = require("../models/doctorModel");
 const User = require("../models/userModel");
 const Notification = require("../models/notificationModel");
 const Appointment = require("../models/appointmentModel");
+const client = require('../db/conn');
 
 const getalldoctors = async (req, res) => {
   try {
-    let docs;
-    if (!req.locals) {
-      docs = await Doctor.find({ isDoctor: true }).populate("userId");
-    } else {
-      docs = await Doctor.find({ isDoctor: true })
-        .find({
-          _id: { $ne: req.locals },
-        })
-        .populate("userId");
-    }
-
-    return res.send(docs);
+    client.query("select * from users inner join doctor on users.user_id = doctor.doc_id where isdoc = true", (err, result) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log(result.rows);
+      res.status(200).json(result.rows);
+    })
   } catch (error) {
+    console.log(error);
     res.status(500).send("Unable to get doctors");
   }
 };

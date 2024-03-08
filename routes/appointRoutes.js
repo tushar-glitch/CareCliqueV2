@@ -1,17 +1,19 @@
 const express = require("express");
 const auth = require("../middleware/auth");
 const appointmentController = require("../controllers/appointmentController");
-
+const rateLimiter = require("../middleware/ratelimiter");
 const appointRouter = express.Router();
 
 appointRouter.get(
-  "/getallappointments",
+  "/getallappointments/:id",
+  rateLimiter,
   auth,
   appointmentController.getallappointments
 );
 
 appointRouter.post(
   "/bookappointment",
+  rateLimiter,
   auth,
   appointmentController.bookappointment
 );

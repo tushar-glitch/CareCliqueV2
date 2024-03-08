@@ -26,7 +26,7 @@ const DoctorCard = ({ ele }) => {
         />
       </div>
       <h3 className="card-name">
-        Dr. {ele?.userId?.firstname + " " + ele?.userId?.lastname}
+        Dr. {ele?.firstname + " " + ele?.lastname}
       </h3>
       <p className="specialization">
         <strong>Specialization: </strong>
@@ -37,11 +37,11 @@ const DoctorCard = ({ ele }) => {
         {ele?.experience}yrs
       </p>
       <p className="fees">
-        <strong>Fees per consultation: </strong>$ {ele?.fees}
+        <strong>Fees per consultation: </strong>₹ {ele?.fees}
       </p>
       <p className="phone">
         <strong>Phone: </strong>
-        {ele?.userId?.mobile}
+        {ele?.mobile}
       </p>
       <button
         className="btn appointment-btn"
